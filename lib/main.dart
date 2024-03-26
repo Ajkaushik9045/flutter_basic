@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         '/HomePage': (context) => HomePage(),
         '/SettingPage': (context) => SettingsPage(),
         '/counter': (context) => counter(),
-        '/calculator': (context) =>Calculator(),
+        '/calculator': (context) =>calculator(),
         '/toDo': (context) => toDo(),
       },
     );
