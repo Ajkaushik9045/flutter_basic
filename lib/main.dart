@@ -12,7 +12,7 @@ void main() async {
   await Hive.initFlutter();
   var box = await Hive.openBox('mybox');
   runApp(MyApp());
-} 
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

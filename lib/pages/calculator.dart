@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class calculator extends StatefulWidget {
   const calculator({super.key});
@@ -8,10 +9,13 @@ class calculator extends StatefulWidget {
 }
 
 class _calculatorState extends State<calculator> {
+  TextEditingController myController = TextEditingController();
   Widget btn(String text, Color btncolor, Color txtcolor) {
     return Container(
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          buttonPressed(text);
+        },
         child: Text(
           text,
           style: TextStyle(fontSize: 35, color: txtcolor),
@@ -45,9 +49,9 @@ class _calculatorState extends State<calculator> {
                     horizontal: 23,
                   ),
                   child: Text(
-                    "0",
+                    "$num1$operand$num2".isEmpty ? "0" : "$num1$operand$num2",
                     textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.black, fontSize: 100),
+                    style: TextStyle(color: Colors.black, fontSize: 30),
                   ),
                 )
               ],
@@ -56,7 +60,7 @@ class _calculatorState extends State<calculator> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 btn("AC", Colors.grey, Colors.black),
-                btn("+/-", Colors.grey, Colors.black),
+                btn("D", Colors.grey, Colors.black),
                 btn("%", Colors.grey, Colors.black),
                 btn("/", Colors.orange, Colors.black),
               ],
@@ -112,59 +116,60 @@ class _calculatorState extends State<calculator> {
     );
   }
 
-  String output = "0";
-  double num1 = 0.0;
-  double num2 = 0.0;
+  // dynamic output = "";
+  String num1 = "";
+  String num2 = "";
   String operand = "";
 
   void buttonPressed(String buttonText) {
-    if (buttonText == "C") {
-      setState(() {
-        output = "0";
-        num1 = 0.0;
-        num2 = 0.0;
-        operand = "";
-      });
-    } else if (buttonText == "+" ||
-        buttonText == "-" ||
-        buttonText == "X" ||
-        buttonText == "/") {
-      num1 = double.parse(output);
-      operand = buttonText;
-      output = "0";
-    } else if (buttonText == ".") {
-      if (!output.contains(".")) {
-        output += ".";
-      }
-    } else if (buttonText == "=") {
-      num2 = double.parse(output);
-      if (operand == "+") {
-        output = (num1 + num2).toString();
-      }
-      if (operand == "-") {
-        output = (num1 - num2).toString();
-      }
-      if (operand == "X") {
-        output = (num1 * num2).toString();
-      }
-      if (operand == "/") {
-        if (num2 != 0) {
-          output = (num1 / num2).toString();
-        } else {
-          output = "Error";
-        }
-      }
-      num1 = 0.0;
-      num2 = 0.0;
-      operand = "";
-    } else {
-      setState(() {
-        if (output == "0") {
-          output = buttonText;
-        } else {
-          output += buttonText;
-        }
-      });
+    if (buttonText == "AC") {
+      clearAll();
+      return;
     }
+    if (buttonText == "D") {
+      deleteNumber();
+      return;
+    }
+    append(buttonText);
+  }
+
+  void deleteNumber() {
+    setState(() {
+      if (num2.isNotEmpty) {
+        num2 = num2.substring(0, num2.length - 1);
+      } else if (operand.isNotEmpty) {
+        operand = "";
+      } else if (num1.isNotEmpty) {
+        num1 = num1.substring(0, num1.length - 1);
+      }
+    });
+  }
+
+  void clearAll() {
+    setState(() {
+      num1 = "";
+      num2 = "";
+      operand = "";
+    });
+  }
+
+  void append(String buttonText) {
+    if (buttonText == "." && int.tryParse(buttonText) == null) {
+      if (operand.isNotEmpty && num2.isNotEmpty) {}
+      operand = buttonText;
+    } else if (num1.isEmpty || operand.isEmpty) {
+      if (buttonText == "." && num1.contains(".")) return;
+      if (buttonText == "." && (num1.isNotEmpty || num1 == "0")) {
+        buttonText = "0.";
+      }
+      num1 += buttonText;
+    } else if (num2.isEmpty || operand.isNotEmpty) {
+      // if (buttonText == "." && num2.contains(".")) return;
+      if (buttonText == "." && (num2.isEmpty || num2 == "0")) {
+        buttonText = "0.";
+      }
+      num2 += buttonText;
+    }
+    setState(() {});
   }
 }
