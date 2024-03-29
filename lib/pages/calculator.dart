@@ -142,15 +142,16 @@ class _calculatorState extends State<calculator> {
   }
 
   void calculate() {
-    if (num1.isEmpty || num2.isEmpty || operand.isEmpty)
+    if (num1.isEmpty || num2.isEmpty || operand.isEmpty) {
       return; // Calculate only if all values are present
+    }
     double number1 = double.tryParse(num1) ??
         0.0; // Parse num1, default to 0.0 if parsing fails
     double number2 = double.tryParse(num2) ??
         0.0; // Parse num2, default to 0.0 if parsing fails
     var result = 0.0;
     switch (operand) {
-      case "+":
+      case "a": "+";
         result = number1 + number2;
         break;
 
