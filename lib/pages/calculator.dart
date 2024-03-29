@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class calculator extends StatefulWidget {
   const calculator({super.key});
@@ -9,8 +8,27 @@ class calculator extends StatefulWidget {
 }
 
 class _calculatorState extends State<calculator> {
-  // TextEditingController myController = TextEditingController();
   Widget btn(String text, Color btncolor, Color txtcolor) {
+    double fontSize = 35.0;
+    double horizontalPadding = 12.0;
+    double verticalPadding = 12.0;
+
+    // Check if the text is "0" and adjust styles accordingly
+    if (text == "0") {
+      return Container(
+        child: ElevatedButton(
+          onPressed: () {},
+          child: Text(
+            "0",
+            style: TextStyle(fontSize: 35, color: Colors.black),
+          ),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey,
+              padding: EdgeInsets.symmetric(horizontal: 60, vertical: 5)),
+        ),
+      );
+    }
+
     return Container(
       child: ElevatedButton(
         onPressed: () {
@@ -18,12 +36,13 @@ class _calculatorState extends State<calculator> {
         },
         child: Text(
           text,
-          style: TextStyle(fontSize: 35, color: txtcolor),
+          style: TextStyle(fontSize: fontSize, color: txtcolor),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: btncolor,
           shape: CircleBorder(),
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding, vertical: verticalPadding),
         ),
       ),
     );
@@ -32,29 +51,27 @@ class _calculatorState extends State<calculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text("Calculator"),
-        backgroundColor: Colors.purple[100],
+        title: Text(
+          "Calculator",
+          style: TextStyle(color: Colors.grey),
+        ),
+        backgroundColor: Colors.black26,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 23,
-                  ),
-                  child: Text(
-                    "$num1$operand$num2".isEmpty ? "0" : "$num1$operand$num2",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.black, fontSize: 30),
-                  ),
-                )
-              ],
+            Padding(
+              padding: EdgeInsets.only(right: 30),
+              child: Text(
+                "$num1$operand$num2".isEmpty ? "0" : "$num1$operand$num2",
+                textAlign: TextAlign.right,
+                style: TextStyle(color: Colors.white, fontSize: 50),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -95,17 +112,7 @@ class _calculatorState extends State<calculator> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text(
-                    "0",
-                    style: TextStyle(fontSize: 35, color: Colors.black),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 60, vertical: 5)),
-                ),
+                btn("0", Colors.grey, Colors.black),
                 btn(".", Colors.grey, Colors.black),
                 btn("=", Colors.orange, Colors.black),
               ],
@@ -223,13 +230,25 @@ class _calculatorState extends State<calculator> {
   }
 
   void append(String buttonText) {
-    if (buttonText == "." && (operand.isEmpty || num2.isEmpty)) {
-      // If the current button is a decimal point and there's no operand or num2
-      // Then it's part of num2
-      if (!num2.contains(".")) {
-        // Ensure there's only one decimal point
-        num2 += buttonText;
+    if (buttonText == ".") {
+      // If the current button is a decimal point
+      if (operand.isEmpty) {
+        // If there's no operand, add the decimal point to num1
+        if (!num1.contains(".")) {
+          // Ensure there's only one decimal point in num1
+          num1 += buttonText;
+        }
+      } else {
+        // If there's an operand, add the decimal point to num2
+        if (!num2.contains(".")) {
+          // Ensure there's only one decimal point in num2
+          num2 += buttonText;
+        }
       }
+    } else if (buttonText == "0" && operand.isEmpty && num1.isEmpty) {
+      // If the current button is "0" and there's no operand and num1 is empty
+      // It's the starting zero
+      num1 = "0";
     } else if (_isNumeric(buttonText)) {
       // If the current button is a number
       if (operand.isEmpty) {
