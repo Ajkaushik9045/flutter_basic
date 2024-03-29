@@ -17,7 +17,9 @@ class _calculatorState extends State<calculator> {
     if (text == "0") {
       return Container(
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            buttonPressed(text);
+          },
           child: Text(
             "0",
             style: TextStyle(fontSize: 35, color: Colors.black),
