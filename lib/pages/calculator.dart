@@ -9,7 +9,7 @@ class calculator extends StatefulWidget {
 }
 
 class _calculatorState extends State<calculator> {
-  TextEditingController myController = TextEditingController();
+  // TextEditingController myController = TextEditingController();
   Widget btn(String text, Color btncolor, Color txtcolor) {
     return Container(
       child: ElevatedButton(
@@ -125,21 +125,21 @@ class _calculatorState extends State<calculator> {
     if (buttonText == "AC") {
       clearAll();
       return;
-    }
-    if (buttonText == "D") {
+    } else if (buttonText == "D") {
       deleteNumber();
       return;
-    }
-    if (buttonText == "%") {
+    } else if (buttonText == "%") {
       convertToPercentage();
       return;
-    }
-    if (buttonText == "=") {
+    } else if (buttonText == "=") {
       calculate();
+      // convertToPercentage();
       return;
     }
     append(buttonText);
   }
+
+  void cal() {}
 
   void calculate() {
     if (num1.isEmpty || num2.isEmpty || operand.isEmpty) {
@@ -151,7 +151,7 @@ class _calculatorState extends State<calculator> {
         0.0; // Parse num2, default to 0.0 if parsing fails
     var result = 0.0;
     switch (operand) {
-      case "a": "+";
+      case "+":
         result = number1 + number2;
         break;
 
@@ -223,24 +223,45 @@ class _calculatorState extends State<calculator> {
   }
 
   void append(String buttonText) {
-    if (buttonText == "." && int.tryParse(buttonText) == null) {
-      if (operand.isNotEmpty && num2.isNotEmpty) {
+    if (buttonText == "." && (operand.isEmpty || num2.isEmpty)) {
+      // If the current button is a decimal point and there's no operand or num2
+      // Then it's part of num2
+      if (!num2.contains(".")) {
+        // Ensure there's only one decimal point
+        num2 += buttonText;
+      }
+    } else if (_isNumeric(buttonText)) {
+      // If the current button is a number
+      if (operand.isEmpty) {
+        // If there's no operand, append to num1
+        num1 += buttonText;
+      } else {
+        // If there's an operand, append to num2
+        num2 += buttonText;
+      }
+    } else if (_isOperand(buttonText)) {
+      // If the current button is an operand
+      if (num1.isNotEmpty && num2.isNotEmpty) {
+        // If both num1 and num2 are not empty, calculate the result
         calculate();
+        num1 = num1; // Set the result as num1
+        num2 = ""; // Clear num2 for new input
       }
-      operand = buttonText;
-    } else if (num1.isEmpty || operand.isEmpty) {
-      if (buttonText == "." && num1.contains(".")) return;
-      if (buttonText == "." && (num1.isNotEmpty || num1 == "0")) {
-        buttonText = "0.";
-      }
-      num1 += buttonText;
-    } else if (num2.isEmpty || operand.isNotEmpty) {
-      // if (buttonText == "." && num2.contains(".")) return;
-      if (buttonText == "." && (num2.isEmpty || num2 == "0")) {
-        buttonText = "0.";
-      }
-      num2 += buttonText;
+      operand = buttonText; // Set the operand
     }
-    setState(() {});
+    setState(() {}); // Update the UI
+  }
+
+  bool _isNumeric(String str) {
+    // Helper function to check if a string is numeric
+    if (str == null) {
+      return false;
+    }
+    return double.tryParse(str) != null;
+  }
+
+  bool _isOperand(String str) {
+    // Helper function to check if a string is an operand
+    return str == "+" || str == "-" || str == "x" || str == "/";
   }
 }
